@@ -13,14 +13,14 @@ void server_event_handler(struct mg_connection *connection, int event, void *eve
         sprintf(ip, "%d.%d.%d.%d\n", MG_IPADDR_PARTS(&connection->rem));
 
         if (mg_match(event_message->uri, mg_str("/set"), NULL)) {
-            printf("[set] received from %s", ip);
+            printf("[SET] Received data from %s", ip);
             if (nob_write_entire_file(FILE_PATH, ip, strlen(ip))) {
                 mg_printf(connection, "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n");
             } else {
                 mg_printf(connection, "HTTP/1.1 500 Internal Server Error\r\nContent-Length: 0\r\n\r\n");
             }
         } else if (mg_match(event_message->uri, mg_str("/get"), NULL)) {
-            printf("[get] received from %s", ip);
+            printf("[GET] Request from %s", ip);
             Nob_String_Builder sb = {0};
             if (nob_read_entire_file(FILE_PATH, &sb)) {
                 mg_printf(connection, "HTTP/1.1 200 OK\r\nContent-Length: %d\r\n\r\n%s", sb.count, sb.items);
