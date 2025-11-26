@@ -5,19 +5,6 @@
 #include "include/nob.h"
 
 #define FILE_PATH "data"
-void client_event_handler(struct mg_connection *connection, int event, void *event_data) {
-    if (event == MG_EV_HTTP_MSG) {
-        struct mg_http_message *event_message = (struct mg_http_message *) event_data;
-    } else if (event == MG_EV_CONNECT) {
-        mg_printf(connection, "POST /set HTTP/1.1\r\nContent-Length: 0\r\n\r\n");
-    } else if (event == MG_EV_WRITE) {
-        connection->is_closing = true;
-        printf("Pinged\n");
-    } else if (event == MG_EV_ERROR) {
-        char *message = (char*) event_data;
-        printf("An error occured during download: %s\n", message);
-    }
-}
 
 #define TIMESTAMP signed long long
 #define USEC_PER_SEC 1000000ull
@@ -26,6 +13,20 @@ TIMESTAMP get_timestamp_usec(void) {
     struct timespec time;
     clock_gettime(CLOCK_REALTIME, &time);
     return time.tv_sec * 1000000L + time.tv_nsec / 1000;
+}
+
+void client_event_handler(struct mg_connection *connection, int event, void *event_data) {
+    if (event == MG_EV_HTTP_MSG) {
+        struct mg_http_message *event_message = (struct mg_http_message *) event_data;
+    } else if (event == MG_EV_CONNECT) {
+        mg_printf(connection, "POST /set HTTP/1.1\r\nContent-Length: 0\r\n\r\n");
+    } else if (event == MG_EV_WRITE) {
+        connection->is_closing = true;
+        printf("Pinged %lld\n", get_timestamp_usec());
+    } else if (event == MG_EV_ERROR) {
+        char *message = (char*) event_data;
+        printf("An error occured during download: %s\n", message);
+    }
 }
 
 void print_usage(void) {
