@@ -17,11 +17,11 @@ TIMESTAMP get_timestamp_usec(void) {
 
 void client_event_handler(struct mg_connection *connection, int event, void *event_data) {
     if (event == MG_EV_HTTP_MSG) {
-        struct mg_http_message *event_message = (struct mg_http_message *) event_data;
-    } else if (event == MG_EV_CONNECT) {
-        mg_printf(connection, "POST /set HTTP/1.1\r\nContent-Length: 0\r\n\r\n");
-    } else if (event == MG_EV_WRITE) {
+        // struct mg_http_message *event_message = (struct mg_http_message *) event_data;
         connection->is_closing = true;
+    } else if (event == MG_EV_CONNECT) {
+        mg_printf(connection, "GET /set HTTP/1.1\r\nContent-Length: 0\r\n\r\n");
+    } else if (event == MG_EV_WRITE) {
         printf("Pinged %lld\n", get_timestamp_usec());
     } else if (event == MG_EV_ERROR) {
         char *message = (char*) event_data;
@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    mg_log_set(MG_LL_NONE);
+    mg_log_set(MG_LL_ERROR);
     struct mg_mgr manager;
     mg_mgr_init(&manager);
 
