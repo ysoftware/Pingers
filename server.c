@@ -35,7 +35,7 @@ void server_event_handler(struct mg_connection *connection, int event, void *eve
 }
 
 int main(void) {
-    mg_log_set(MG_LL_ERROR);
+    mg_log_set(MG_LL_VERBOSE);
     struct mg_mgr manager;
     mg_mgr_init(&manager);
 
